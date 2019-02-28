@@ -18,7 +18,7 @@ function views_civicrm_documents_new_case_document($form, &$form_state, $case_id
         '#type' => 'file',
         '#title' => t('File'),
         '#upload_validators' => array(
-          'file_validate_extensions' => array('jpg png txt doc docx rtf odt xls xlsx ods ppt pptx odp pdf zip rar gz')
+          'file_validate_extensions' => array('jpg jpeg png txt doc docx rtf odt xls xlsx ods ppt pptx odp pdf zip rar gz')
         )
     );
 
@@ -86,7 +86,7 @@ function views_civicrm_documents_new_version($form, &$form_state, $document_id) 
         '#type' => 'file',
         '#title' => t('File'),
         '#upload_validators' => array(
-          'file_validate_extensions' => array('jpg png txt doc docx rtf odt xls xlsx ods ppt pptx odp pdf zip rar gz')
+          'file_validate_extensions' => array('jpg jpeg png txt doc docx rtf odt xls xlsx ods ppt pptx odp pdf zip rar gz')
         )
     );
 
