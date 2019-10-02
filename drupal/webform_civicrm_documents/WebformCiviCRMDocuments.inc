@@ -155,7 +155,7 @@ class WebformCiviCRMDocuments {
       $i = 1;
       foreach ($submission as $fid) {
         $this->saveFileAsDocument($fid, $subject.' '.$i, $component);
-        $i ++;
+        $i++;
       }
     }
   }
@@ -167,29 +167,46 @@ class WebformCiviCRMDocuments {
       return;
     }
 
-    if (!is_numeric($fid) && is_string(($fid))) {
+    if (!is_numeric($fid) && is_string($fid)) {
       //multifile
       $i = 1;
-      $fids = $fid ? @unserialize($fid) : NULL;
-      if (!is_array($fids)) {
-        return;
+      if(is_string($fid)){
+        //continue
+        $fids = array($fid);
+      } else if (is_array($fid)) {
+        $fids = $fid;
+      } else {
+        $fids = NULL;
       }
-      foreach($fids as $id) {
-        $this->saveFileAsDocument($id, $subject.' '.$i, $component);
-        $i++;
-      }
-      return;
+    } else {
+      $fids = array($fid);
     }
 
-    $file = file_load($fid);
-    if(file_exists($file->uri)) {
-      $wrapper = file_stream_wrapper_get_instance_by_uri($file->uri);
-      $filepath = $wrapper->realpath();
+    if(is_array($fids)){
+      foreach($fids as $fid) {
+        $arFiles = str_replace('[','',$fid);
+        $arFiles = str_replace(']','',$arFiles);
+        $arFiles = strpos($arFiles,',')?explode(',',$arFiles):array($arFiles);
+        foreach($arFiles as $key => $value) {
+          $arFiles[$key] = str_replace('"','',$value);
+        }
+      }
+    }
 
-      $doc = $this->createDocument($subject, $component);
-      $documentsRepo->persist($doc);
+    if(is_array($arFiles)) {
+      foreach($arFiles as $file_id){
+        $file = file_load($file_id);
 
-      CRM_Documents_Utils_File::copyFileToDocument($filepath, $file->filemime, $doc);
+        if(file_exists($file->uri)) {
+          $wrapper = file_stream_wrapper_get_instance_by_uri($file->uri);
+          $filepath = $wrapper->realpath();
+
+          $doc = $this->createDocument($subject, $component);
+          $documentsRepo->persist($doc);
+
+          CRM_Documents_Utils_File::copyFileToDocument($filepath, $file->filemime, $doc);
+        }
+      }
     }
   }
 
